@@ -15,6 +15,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
         <activity
             android:name=".SettingsActivity"
             android:label="@string/main_menu_settings"
@@ -34,7 +35,7 @@
         <activity
             android:name=".AddProgramActivity"
             android:label="@string/program_view_create_program"
-            android:parentActivityName=".ProgramsActivity"/>
+            android:parentActivityName=".ProgramsActivity" />
 
         <provider
             android:name=".Data.ProgramProvider"
@@ -44,9 +45,13 @@
         <activity
             android:name=".ProgramViewActivity"
             android:parentActivityName=".ProgramsActivity"
-            >
+            />
 
-        </activity>
+        <activity
+            android:name=".ProgramEditActivity"
+            android:label="@string/title_activity_program_edit"
+            android:parentActivityName=".ProgramViewActivity" />
+
     </application>
 
 </manifest>
