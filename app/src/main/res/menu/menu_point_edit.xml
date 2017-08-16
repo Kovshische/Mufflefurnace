@@ -4,10 +4,10 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:context=".ProgramViewActivity">
 
-    <item
-        android:id="@+id/action_edit_program"
-        android:title="@string/program_view_menu_edit"
-        app:showAsAction="never" />
 
+    <item
+        android:id="@+id/action_delete"
+        android:title="@string/program_view_menu_delete"
+        app:showAsAction="never" />
 
 </menu>

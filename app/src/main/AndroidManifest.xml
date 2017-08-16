@@ -15,7 +15,6 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
         <activity
             android:name=".SettingsActivity"
             android:label="@string/main_menu_settings"
@@ -44,14 +43,16 @@
 
         <activity
             android:name=".ProgramViewActivity"
-            android:parentActivityName=".ProgramsActivity"
-            />
-
+            android:parentActivityName=".ProgramsActivity" />
         <activity
             android:name=".ProgramEditActivity"
             android:label="@string/title_activity_program_edit"
             android:parentActivityName=".ProgramViewActivity" />
 
+        <activity
+            android:name=".AddPointActivity"
+            android:parentActivityName=".ProgramEditActivity">
+        </activity>
     </application>
 
 </manifest>

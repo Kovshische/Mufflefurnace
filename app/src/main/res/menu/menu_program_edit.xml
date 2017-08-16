@@ -5,9 +5,12 @@
     tools:context=".ProgramViewActivity">
 
     <item
-        android:id="@+id/action_edit_program"
-        android:title="@string/program_view_menu_edit"
+        android:id="@+id/action_edit_program_name"
+        android:title="@string/program_edit_menu_edit_program"
         app:showAsAction="never" />
-
+    <item
+        android:id="@+id/action_delete"
+        android:title="@string/program_view_menu_delete"
+        app:showAsAction="never" />
 
 </menu>

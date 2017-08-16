@@ -7,6 +7,11 @@
     <string name="program_view_create_program">Create program</string>
     <string name="program_view_menu_edit">Edit</string>
     <string name="program_view_menu_delete">Delete</string>
+    <string name="program_edit_menu_edit_program">Edit program name</string>
+    <string name="add_point_add_point">Add point</string>
+    <string name="add_point_edit_point">Edit point</string>
+    <string name="add_point_placeholder_time">HH:MM</string>
+
 
 
     <string name="settings_max_heating_rate">Max heating rate</string>
@@ -19,6 +24,9 @@
     <string name="title_activity_programs">ProgramsActivity</string>
 
     <string name="hint_program_name">Program name</string>
+
+    <string name="hint_point_time">Time</string>
+    <string name="hint_point_temperature">Temperature</string>
 
     <!-- Label for editor menu option to save pet and leave editor [CHAR LIMIT=20] -->
     <string name="action_save">Save</string>

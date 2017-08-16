@@ -54,10 +54,5 @@ public class ProgramViewActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    public static void startactivity(Intent i) {
-        // Intent i = new Intent(context, ProgramViewActivity.class);
-        startactivity(i);
-    }
-
 
 }

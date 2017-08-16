@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="@dimen/activity_margin"
+    tools:context=".AddPointActivity">
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginTop="16dp">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            style="@style/SettingsScreenTextTopic"
+            android:text="@string/hint_point_temperature" />
+
+        <EditText
+            android:id="@+id/add_point_temperature"
+            android:layout_width="0dp"
+            android:layout_weight="2"
+            style="@style/EditorFieldStyle"
+            android:layout_marginLeft="16dp"
+            android:inputType="number" />
+
+        >
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginTop="16dp">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            style="@style/SettingsScreenTextTopic"
+            android:text="@string/hint_point_time" />
+
+        <EditText
+            android:id="@+id/add_point_time"
+            android:layout_width="0dp"
+            android:layout_weight="2"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="16dp"
+            android:hint="@string/add_point_placeholder_time"
+            android:ems="10"
+            android:inputType="time" />
+
+
+
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/testButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="test"/>
+
+    <TextView
+        android:id="@+id/testTime"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        />
+</LinearLayout>
