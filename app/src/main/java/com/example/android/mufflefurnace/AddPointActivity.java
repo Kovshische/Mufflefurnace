@@ -1,8 +1,13 @@
 package com.example.android.mufflefurnace;
 
+import android.content.Intent;
+import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.v4.app.LoaderManager;
 import android.support.v4.app.NavUtils;
+import android.support.v4.content.CursorLoader;
+import android.support.v4.content.Loader;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -11,11 +16,15 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
-public class AddPointActivity extends AppCompatActivity {
+import com.example.android.mufflefurnace.Data.ProgramContract;
+
+public class AddPointActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor>{
 
     private Uri mCurrentUri;
     private Uri mCurrentProgramUri;
-    private Uri mCurrentPointUra;
+    private Uri mCurrentPointUri;
+
+    private int mCurrentProgramID;
 
     private EditText timeEditText;
     private EditText temperatureEditText;
@@ -25,17 +34,26 @@ public class AddPointActivity extends AppCompatActivity {
 
     TextView testTextView;
 
+    private static final int EXISTING_PROGRAM_ID_LOADER = 1;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_point);
 
+        setTitle(R.string.add_point_add_point);
+
         timeEditText = (EditText) findViewById(R.id.add_point_time);
         temperatureEditText = (EditText) findViewById(R.id.add_point_temperature);
 
+        //Examine the intent that was used to launch this activity
+        Intent intent = getIntent();
+        mCurrentProgramUri = intent.getData();
+
+        //Get current program ID
 
 
-        setTitle(R.string.add_point_add_point);
+
 
         //testing time to seconds
 
@@ -48,10 +66,12 @@ public class AddPointActivity extends AppCompatActivity {
                 String time = timeEditText.getText().toString();
                 //String timeString = timeEditText.getText().toString().trim();
                 int timeInteger = timeToInteger(time);
-                testTextView.setText(Integer.toString(timeInteger));
+                testTextView.setText(Integer.toString(timeInteger) );
 
             }
         });
+
+        getSupportLoaderManager().initLoader(EXISTING_PROGRAM_ID_LOADER, null, this);
 
     }
 
@@ -130,4 +150,70 @@ public class AddPointActivity extends AppCompatActivity {
         }
         return super.onOptionsItemSelected(item);
     }
+
+/*
+    private int getmCurrentProgramID (){
+
+        //Examine the intent that was used to launch this activity
+        Intent intent = getIntent();
+        mCurrentProgramUri = intent.getData();
+
+        String [] projection = {
+                ProgramContract.ProgramEntry._ID
+        };
+
+
+        Cursor cursor = getContentResolver().query(
+                mCurrentProgramUri,
+                projection,
+                null,
+                null,
+                null
+        );
+
+        mCurrentProgramID = cursor.getInt(cursor.getColumnIndexOrThrow(ProgramContract.ProgramEntry._ID));
+
+        return mCurrentProgramID;
+
+    }
+
+*/
+    @Override
+    public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+        if (mCurrentProgramUri == null){
+            return null;
+        }
+        String [] projection = {
+                ProgramContract.ProgramEntry._ID
+        };
+
+        return new CursorLoader(this,
+                mCurrentProgramUri,
+                projection,
+                null,
+                null,
+                null
+        );
+    }
+
+    @Override
+    public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
+        // Bail early if the cursor is null or there is less than 1 row in the cursor
+        if (cursor == null || cursor.getCount() <1){
+            return;
+        }
+        if (cursor.moveToFirst()){
+           int  currentProgramIDIndex = cursor.getColumnIndex(ProgramContract.ProgramEntry._ID);
+            mCurrentProgramID = cursor.getInt(currentProgramIDIndex);
+
+            setTitle(Integer.toString(mCurrentProgramID));
+        }
+    }
+
+    @Override
+    public void onLoaderReset(Loader<Cursor> loader) {
+
+    }
 }
+
+
