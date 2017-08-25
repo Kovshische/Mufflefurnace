@@ -66,8 +66,6 @@
         android:theme="@style/AppTheme.AppBarOverlay">
     </android.support.design.widget.AppBarLayout>
 
-    <include layout="@layout/content_programs" />
-
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/fab"
         android:layout_width="wrap_content"
@@ -77,6 +75,7 @@
         app:backgroundTint="@color/menuPrimary"
         android:src="@android:drawable/ic_input_add" />
 
+    <include layout="@layout/content_programs" />
 
 
 </android.support.design.widget.CoordinatorLayout>

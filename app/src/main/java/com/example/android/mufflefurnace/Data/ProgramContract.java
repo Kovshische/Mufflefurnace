@@ -20,7 +20,7 @@ public final class ProgramContract {
     public static abstract class ProgramEntry implements BaseColumns {
 
         public static final Uri CONTENT_URI_PROGRAMS = Uri.withAppendedPath(BASE_CONTENT_URI, PATH_PROGRAMS);
-        public static final  Uri CONTENT_URI_POINTS = Uri.withAppendedPath(BASE_CONTENT_URI,PATH_POINTS);
+        public static final Uri CONTENT_URI_POINTS = Uri.withAppendedPath(BASE_CONTENT_URI, PATH_POINTS);
 
 
         // Table Programs

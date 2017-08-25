@@ -1,5 +1,6 @@
 package com.example.android.mufflefurnace;
 
+import android.content.ContentValues;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
@@ -9,14 +10,18 @@ import android.support.v4.app.NavUtils;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.android.mufflefurnace.Data.ProgramContract;
+
+import static com.example.android.mufflefurnace.Data.ProgramDbHelper.LOG_TAG;
 
 public class AddPointActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor>{
 
@@ -34,6 +39,8 @@ public class AddPointActivity extends AppCompatActivity implements LoaderManager
 
     TextView testTextView;
 
+    private String addPointMessage;
+
     private static final int EXISTING_PROGRAM_ID_LOADER = 1;
 
     @Override
@@ -49,10 +56,6 @@ public class AddPointActivity extends AppCompatActivity implements LoaderManager
         //Examine the intent that was used to launch this activity
         Intent intent = getIntent();
         mCurrentProgramUri = intent.getData();
-
-        //Get current program ID
-
-
 
 
         //testing time to seconds
@@ -75,6 +78,15 @@ public class AddPointActivity extends AppCompatActivity implements LoaderManager
 
     }
 
+    //Show toast
+    void displayToast(String text) {
+
+        Toast toast = Toast.makeText(this, text, Toast.LENGTH_LONG);
+        toast.show();
+        Log.i(LOG_TAG, "toast displayed");
+        // toast.setGravity(Gravity.BOTTOM,0,0);
+
+    }
 
     private void insertPoint(){
         //get data from the fields
@@ -84,6 +96,26 @@ public class AddPointActivity extends AppCompatActivity implements LoaderManager
 
         String timeString = timeEditText.getText().toString().trim();
         int timeInteger = timeToInteger(timeString);
+
+        // Create a new map of values, where column names are the keys
+        ContentValues values = new ContentValues();
+        values.put(ProgramContract.ProgramEntry.COLUMN_TEMPERATURE, temperatureInteger);
+        values.put(ProgramContract.ProgramEntry.COLUMN_TIME, timeInteger);
+        values.put(ProgramContract.ProgramEntry.COLUMN_PROGRAM_ID, mCurrentProgramID);
+
+
+        Uri newUri = getContentResolver().insert(ProgramContract.ProgramEntry.CONTENT_URI_POINTS, values);
+        if (newUri == null){
+            //If the  new content URI is null, then there was an error with insertion
+            displayToast("Error with saving point");
+            Log.i (LOG_TAG,"Error with saving point");
+        } else {
+            addPointMessage = "Point saved successful";
+            displayToast(addPointMessage);
+            Log.i(LOG_TAG, "New row is " + newUri.toString());
+        }
+
+
     }
 
     private int timeToInteger (String timeString){
@@ -106,14 +138,25 @@ public class AddPointActivity extends AppCompatActivity implements LoaderManager
                     }
 
                     else {
-                        minutes = Integer.parseInt(minutesString);
+                        if (minutesString.equals("")) {
+                            minutes = 0;
+                        }
+                        else {
+                            minutes = Integer.parseInt(minutesString);
+                        }
                     }
 
         }
         else {
             minutes = 0;
-            hours = Integer.parseInt(timeString);
+            if (timeString.equals("")) {
+                hours = 0;
+            }
+            else {
+                hours = Integer.parseInt(timeString);
+            }
         }
+
 
         timeInSeconds = (hours*60)+minutes;
 
@@ -135,7 +178,7 @@ public class AddPointActivity extends AppCompatActivity implements LoaderManager
             // Respond to a click on the "Save" menu option
             case R.id.action_save:
                 // Save pet to the data base
-  //              insertPoint();
+                insertPoint();
                 finish();
                 return true;
             // Respond to a click on the "Delete" menu option
@@ -144,8 +187,10 @@ public class AddPointActivity extends AppCompatActivity implements LoaderManager
                 return true;
             // Respond to a click on the "Up" arrow button in the app bar
             case android.R.id.home:
-                // Navigate back to parent activity (CatalogActivity)
-                NavUtils.navigateUpFromSameTask(this);
+                // Navigate back to parent activity (ProgramViewActivity)
+                Intent intent1 = new Intent(AddPointActivity.this, ProgramViewActivity.class);
+                intent1.setData(mCurrentProgramUri);
+                NavUtils.navigateUpTo(this,intent1);
                 return true;
         }
         return super.onOptionsItemSelected(item);

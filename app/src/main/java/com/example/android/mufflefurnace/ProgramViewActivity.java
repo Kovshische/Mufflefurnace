@@ -52,7 +52,7 @@ public class ProgramViewActivity extends AppCompatActivity implements LoaderMana
                 Intent intent = new Intent(ProgramViewActivity.this, ProgramEditActivity.class);
                 intent.setData(mCurrentProgramUri);
                 startActivity(intent);
-                // insertPet();
+
                 return true;
 
 

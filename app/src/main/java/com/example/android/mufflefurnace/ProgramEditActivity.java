@@ -13,27 +13,31 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ListView;
 
 import com.example.android.mufflefurnace.Data.ProgramContract;
 
 import static com.example.android.mufflefurnace.R.id.action_edit_program_name;
 
-public class ProgramEditActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor>{
+public class ProgramEditActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor> {
 
-    /** Content URI for the existing program (null if it's a new pet) */
+    /**
+     * Content URI for the existing program (null if it's a new pet)
+     */
 
 
     private static final int EXISTING_PROGRAM_ID_LOADER = 1;
+    private static final int POINTS_LOADER = 2;
 
+    PointCursorAdapter mPointCursorAdapter;
     private Uri mCurrentProgramUri;
     private String mCurrentProgramName;
+    private int mCurrentProgramId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_program_edit);
-//        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-//        setSupportActionBar(toolbar);
 
 
         Intent intent = getIntent();
@@ -50,8 +54,27 @@ public class ProgramEditActivity extends AppCompatActivity implements LoaderMana
             }
         });
 
+       //get current  mCurrentProgramId;
+
+
+
+        //find the ListView which will be populated with the program data
+        ListView petListView = (ListView) findViewById(R.id.list_view_points);
+
+        mPointCursorAdapter = new PointCursorAdapter(this, null);
+        petListView.setAdapter(mPointCursorAdapter);
+
         getSupportLoaderManager().initLoader(EXISTING_PROGRAM_ID_LOADER, null, this);
     }
+
+
+
+    private void initPointLoader() {
+        getSupportLoaderManager().initLoader(POINTS_LOADER, null, this);
+    }
+
+
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -84,8 +107,7 @@ public class ProgramEditActivity extends AppCompatActivity implements LoaderMana
                 // Navigate back to parent activity (ProgramViewActivity)
                 Intent intent1 = new Intent(ProgramEditActivity.this, ProgramViewActivity.class);
                 intent1.setData(mCurrentProgramUri);
-                //startActivity(intent1);
-                NavUtils.navigateUpTo(this,intent1);
+                NavUtils.navigateUpTo(this, intent1);
                 return true;
 
         }
@@ -94,38 +116,74 @@ public class ProgramEditActivity extends AppCompatActivity implements LoaderMana
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-        if (mCurrentProgramUri == null){
-            return null;
-        }
-        String [] projection = {
-                ProgramContract.ProgramEntry.COLUMN_PROGRAM_NAME
-        };
+        if (id ==  EXISTING_PROGRAM_ID_LOADER)
+        {
+            if (mCurrentProgramUri == null) {
+                return null;
+            }
+            String[] projection = {
+                    ProgramContract.ProgramEntry.COLUMN_PROGRAM_NAME
+            };
 
-        return new CursorLoader(this,
-                mCurrentProgramUri,
-                projection,
-                null,
-                null,
-                null
-        );
-    }
+            return new CursorLoader(this,
+                    mCurrentProgramUri,
+                    projection,
+                    null,
+                    null,
+                    null
+            );
+        }
+
+
+        if (id ==  POINTS_LOADER)
+        {
+            String[] projectionForPoint = {
+                    ProgramContract.ProgramEntry._ID,
+                    ProgramContract.ProgramEntry.COLUMN_TIME,
+                    ProgramContract.ProgramEntry.COLUMN_TEMPERATURE
+            };
+
+            return new CursorLoader(
+                    this,
+                    ProgramContract.ProgramEntry.CONTENT_URI_POINTS,
+                    projectionForPoint,
+                    null,
+                    null,
+                    null
+            );
+        }
+        else return null;
+        }
+
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
-        // Bail early if the cursor is null or there is less than 1 row in the cursor
-        if (cursor == null || cursor.getCount() <1){
-            return;
-        }
-        if (cursor.moveToFirst()){
-            int  currentProgramIDIndex = cursor.getColumnIndex(ProgramContract.ProgramEntry.COLUMN_PROGRAM_NAME);
-            mCurrentProgramName = cursor.getString(currentProgramIDIndex);
 
-            setTitle(mCurrentProgramName);
+        switch (loader.getId()) {
+            case EXISTING_PROGRAM_ID_LOADER:
+            // Bail early if the cursor is null or there is less than 1 row in the cursor
+            if (cursor == null || cursor.getCount() < 1) {
+                return;
+            }
+            if (cursor.moveToFirst()) {
+                int currentProgramIDIndex = cursor.getColumnIndex(ProgramContract.ProgramEntry.COLUMN_PROGRAM_NAME);
+                mCurrentProgramName = cursor.getString(currentProgramIDIndex);
+
+                setTitle(mCurrentProgramName);
+            }
+            initPointLoader();
+                break;
+
+
+
+            case POINTS_LOADER:
+               mPointCursorAdapter.swapCursor(cursor);
         }
+
+
     }
-
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
-
+        mPointCursorAdapter.swapCursor(null);
     }
 }
