@@ -1,5 +1,6 @@
 package com.example.android.mufflefurnace;
 
+import android.content.ContentUris;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
@@ -13,6 +14,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ListView;
 
 import com.example.android.mufflefurnace.Data.ProgramContract;
@@ -59,10 +61,37 @@ public class ProgramEditActivity extends AppCompatActivity implements LoaderMana
 
 
         //find the ListView which will be populated with the program data
-        ListView petListView = (ListView) findViewById(R.id.list_view_points);
+        ListView pointListView = (ListView) findViewById(R.id.list_view_points);
+
+        //find and set empty view on the ListView, so that is only show when list has 0 items
+        View emptyView = findViewById(R.id.empty_view);
+        pointListView.setEmptyView(emptyView);
 
         mPointCursorAdapter = new PointCursorAdapter(this, null);
-        petListView.setAdapter(mPointCursorAdapter);
+        pointListView.setAdapter(mPointCursorAdapter);
+
+        //Setup item click listener
+        pointListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
+                //Create new intent to go to {@Link EditorActivity}
+                Intent intent = new Intent(ProgramEditActivity.this, AddPointActivity.class);
+
+                //Form the content URI that represents the specific pet that was clicked on,
+                //by appending the "id" (passed as input to this method) onto the
+                // {@link ProgramEntry#CONTENT_URI}
+                // for example, the URI would be "content://com.example.android.programs/program/2"
+                //if the pet with ID 2 was clicked on
+                Uri currentPointUri = ContentUris.withAppendedId(ProgramContract.ProgramEntry.CONTENT_URI_POINTS, id);
+
+                //Set the URI on the data field of the intent
+                intent.setData(currentPointUri);
+
+                // Launch the activity to display the data
+                startActivity(intent);
+            }
+        });
+
 
         getSupportLoaderManager().initLoader(EXISTING_PROGRAM_ID_LOADER, null, this);
     }
@@ -122,6 +151,7 @@ public class ProgramEditActivity extends AppCompatActivity implements LoaderMana
                 return null;
             }
             String[] projection = {
+                    ProgramContract.ProgramEntry._ID,
                     ProgramContract.ProgramEntry.COLUMN_PROGRAM_NAME
             };
 
@@ -138,18 +168,25 @@ public class ProgramEditActivity extends AppCompatActivity implements LoaderMana
         if (id ==  POINTS_LOADER)
         {
             String[] projectionForPoint = {
+                    ProgramContract.ProgramEntry.COLUMN_PROGRAM_ID,
                     ProgramContract.ProgramEntry._ID,
                     ProgramContract.ProgramEntry.COLUMN_TIME,
                     ProgramContract.ProgramEntry.COLUMN_TEMPERATURE
             };
 
+            String  mCurrentProgramIdString = Integer.toString(mCurrentProgramId);
+
+            // Select Where ProgramId = currentProgramID
+            String select = "(" + ProgramContract.ProgramEntry.COLUMN_PROGRAM_ID + "=" + mCurrentProgramIdString +"  )";
+
+
             return new CursorLoader(
                     this,
                     ProgramContract.ProgramEntry.CONTENT_URI_POINTS,
                     projectionForPoint,
+                    select,
                     null,
-                    null,
-                    null
+                    ProgramContract.ProgramEntry.COLUMN_TIME
             );
         }
         else return null;
@@ -166,8 +203,11 @@ public class ProgramEditActivity extends AppCompatActivity implements LoaderMana
                 return;
             }
             if (cursor.moveToFirst()) {
-                int currentProgramIDIndex = cursor.getColumnIndex(ProgramContract.ProgramEntry.COLUMN_PROGRAM_NAME);
-                mCurrentProgramName = cursor.getString(currentProgramIDIndex);
+                int currentProgramIdIndex = cursor.getColumnIndexOrThrow(ProgramContract.ProgramEntry._ID);
+                int currentProgramNameIndex = cursor.getColumnIndex(ProgramContract.ProgramEntry.COLUMN_PROGRAM_NAME);
+
+                mCurrentProgramName = cursor.getString(currentProgramNameIndex);
+                mCurrentProgramId = cursor.getInt(currentProgramIdIndex);
 
                 setTitle(mCurrentProgramName);
             }

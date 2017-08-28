@@ -188,7 +188,7 @@ public class AddPointActivity extends AppCompatActivity implements LoaderManager
             // Respond to a click on the "Up" arrow button in the app bar
             case android.R.id.home:
                 // Navigate back to parent activity (ProgramViewActivity)
-                Intent intent1 = new Intent(AddPointActivity.this, ProgramViewActivity.class);
+                Intent intent1 = new Intent(AddPointActivity.this, ProgramEditActivity.class);
                 intent1.setData(mCurrentProgramUri);
                 NavUtils.navigateUpTo(this,intent1);
                 return true;
