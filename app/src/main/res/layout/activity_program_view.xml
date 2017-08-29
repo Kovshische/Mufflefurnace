@@ -28,6 +28,21 @@
                 />
         </RelativeLayout>
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <TextView
+            style="@style/Program_view_edit_time_temperature"
+            android:text="@string/program_view_edit_time"/>
+
+        <TextView
+            style="@style/Program_view_edit_time_temperature"
+            android:text="@string/program_view_edit_temperature"/>
+
+    </LinearLayout>
+
     <ListView
         android:id="@+id/list_view_points"
         android:layout_width="match_parent"
