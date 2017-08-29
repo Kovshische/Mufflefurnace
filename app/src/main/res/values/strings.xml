@@ -54,4 +54,9 @@
     <string name="program_view_edit_time">Time (minutes)</string>
     <string name="program_view_edit_temperature">Temperature  °C </string>
 
+    <!-- AddPoint Title -->
+    <string name="add_program_title_edit_program">Edit Program</string>
+    <string name="add_program_title_add_program">Add Program</string>
+
+
 </resources>

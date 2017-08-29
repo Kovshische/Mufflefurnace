@@ -1,9 +1,13 @@
 package com.example.android.mufflefurnace;
 
 import android.content.ContentValues;
+import android.content.Intent;
+import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.v4.app.LoaderManager;
 import android.support.v4.app.NavUtils;
+import android.support.v4.content.Loader;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Menu;
@@ -12,29 +16,41 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.example.android.mufflefurnace.Data.ProgramContract;
-import com.example.android.mufflefurnace.Data.ProgramDbHelper;
 
 
-public class AddProgramActivity extends AppCompatActivity {
+public class AddProgramActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor> {
 
-    private static String LOG_TAG =AddProgramActivity.class.getSimpleName();
+    private static String LOG_TAG = AddProgramActivity.class.getSimpleName();
 
     private String addProgramMessage;
 
-    /**
-     * EditText field to enter the program's name
-     */
+    private Uri mCurrentProgramUri;
+
+    private static final int EXISTING_PROGRAM_LOADER = 1;
+
     private EditText mProgramName;
 
-    private ProgramDbHelper mDbHelper = new ProgramDbHelper(this);
+ //   private ProgramDbHelper mDbHelper = new ProgramDbHelper(this);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_program);
 
+        Intent intent = getIntent();
+        mCurrentProgramUri = intent.getData();
+
+        if (mCurrentProgramUri == null){
+            setTitle(R.string.add_program_title_add_program);
+        }
+        else{
+            setTitle(R.string.add_program_title_edit_program);
+        }
+
         // Find all relevant views that we will need to read user input from
-        mProgramName =(EditText) findViewById(R.id.edit_pet_name);
+        mProgramName =(EditText) findViewById(R.id.edit_program_name);
+
+        getSupportLoaderManager().initLoader(EXISTING_PROGRAM_LOADER, null, this);
 
     }
 
@@ -90,11 +106,35 @@ public class AddProgramActivity extends AppCompatActivity {
                 return true;
             // Respond to a click on the "Up" arrow button in the app bar
             case android.R.id.home:
-                // Navigate back to parent activity (CatalogActivity)
-                NavUtils.navigateUpFromSameTask(this);
-                return true;
+                if (mCurrentProgramUri == null){
+                    // Navigate back to parent activity (CatalogActivity)
+                    NavUtils.navigateUpFromSameTask(this);
+                    return true;
+                }
+                else {
+                    // Navigate back to parent activity (ProgramEditActivity)
+                    Intent intent1 = new Intent(AddProgramActivity.this, ProgramEditActivity.class);
+                    intent1.setData(mCurrentProgramUri);
+                    NavUtils.navigateUpTo(this, intent1);
+                    return true;
+                }
+
         }
         return super.onOptionsItemSelected(item);
     }
 
+    @Override
+    public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+        return null;
+    }
+
+    @Override
+    public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+
+    }
+
+    @Override
+    public void onLoaderReset(Loader<Cursor> loader) {
+
+    }
 }

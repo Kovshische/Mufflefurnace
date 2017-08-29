@@ -10,7 +10,7 @@
     tools:context=".AddProgramActivity">
 
     <EditText
-        android:id="@+id/edit_pet_name"
+        android:id="@+id/edit_program_name"
         android:hint="@string/hint_program_name"
         android:inputType="textCapWords"
         style="@style/EditorFieldStyle" />
