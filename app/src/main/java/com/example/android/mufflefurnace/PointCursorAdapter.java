@@ -43,6 +43,7 @@ public class PointCursorAdapter extends CursorAdapter {
 
         final int program_id = cursor.getInt(cursor.getColumnIndexOrThrow(ProgramContract.ProgramEntry._ID));
 
+
         textViewTime.setText(timeString);
         textViewTemperature.setText(temperatureString);
         // textViewCreated.setText(temperature);

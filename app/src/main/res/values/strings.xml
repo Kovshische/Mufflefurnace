@@ -50,13 +50,19 @@
     <string name="program_view_start">Start</string>
     <string name="title_activity_program_edit">Edit Program</string>
 
-    <!-- Activity ProgranView ProgramEdit -->
+    <!-- Activity ProgramView ProgramEdit -->
     <string name="program_view_edit_time">Time (minutes)</string>
     <string name="program_view_edit_temperature">Temperature  °C </string>
 
-    <!-- AddPoint Title -->
+    <!-- AddProgram Title -->
     <string name="add_program_title_edit_program">Edit Program</string>
     <string name="add_program_title_add_program">Add Program</string>
+
+    <!-- AddPoint Title -->
+    <string name="add_point_title_edit_point">Edit Point</string>
+    <string name="add_point_title_add_point">Add Point</string>
+
+
 
 
 </resources>

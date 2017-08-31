@@ -7,6 +7,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.app.NavUtils;
+import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -23,14 +24,16 @@ public class AddProgramActivity extends AppCompatActivity implements LoaderManag
     private static String LOG_TAG = AddProgramActivity.class.getSimpleName();
 
     private String addProgramMessage;
+    private String editProgramNameMessage;
+
 
     private Uri mCurrentProgramUri;
 
     private static final int EXISTING_PROGRAM_LOADER = 1;
 
-    private EditText mProgramName;
+    private EditText mProgramNameTextView;
 
- //   private ProgramDbHelper mDbHelper = new ProgramDbHelper(this);
+    //   private ProgramDbHelper mDbHelper = new ProgramDbHelper(this);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,15 +43,14 @@ public class AddProgramActivity extends AppCompatActivity implements LoaderManag
         Intent intent = getIntent();
         mCurrentProgramUri = intent.getData();
 
-        if (mCurrentProgramUri == null){
+        if (mCurrentProgramUri == null) {
             setTitle(R.string.add_program_title_add_program);
-        }
-        else{
+        } else {
             setTitle(R.string.add_program_title_edit_program);
         }
 
         // Find all relevant views that we will need to read user input from
-        mProgramName =(EditText) findViewById(R.id.edit_program_name);
+        mProgramNameTextView = (EditText) findViewById(R.id.edit_program_name);
 
         getSupportLoaderManager().initLoader(EXISTING_PROGRAM_LOADER, null, this);
 
@@ -63,23 +65,45 @@ public class AddProgramActivity extends AppCompatActivity implements LoaderManag
         // toast.setGravity(Gravity.BOTTOM,0,0);
     }
 
-    private void insertProgram (){
-        String nameString = mProgramName.getText().toString().trim();
+    private void insertProgram() {
+        String nameString = mProgramNameTextView.getText().toString().trim();
 
         ContentValues values = new ContentValues();
         values.put(ProgramContract.ProgramEntry.COLUMN_PROGRAM_NAME, nameString);
 
         Uri newUri = getContentResolver().insert(ProgramContract.ProgramEntry.CONTENT_URI_PROGRAMS, values);
 
-        if (newUri == null){
+        if (newUri == null) {
             //If the  new content URI is null, then there was an error with insertion
             displayToast("Error with saving program");
-            Log.i (LOG_TAG,"Error with saving program");
+            Log.i(LOG_TAG, "Error with saving program");
         } else {
             addProgramMessage = "Program saved successful";
             displayToast(addProgramMessage);
             Log.i(LOG_TAG, "New row is " + newUri.toString());
         }
+    }
+
+
+
+    private void updateProgram() {
+        String nameString = mProgramNameTextView.getText().toString().trim();
+
+        ContentValues values = new ContentValues();
+        values.put(ProgramContract.ProgramEntry.COLUMN_PROGRAM_NAME, nameString);
+
+        int update = getContentResolver().update(mCurrentProgramUri, values, ProgramContract.ProgramEntry.COLUMN_PROGRAM_NAME, null);
+
+        if (update == 0) {
+            //If the  new content URI is null, then there was an error with insertion
+            displayToast("Error with update program");
+            Log.i(LOG_TAG, "Error with update program");
+        } else {
+            editProgramNameMessage = "Program updated successful";
+            displayToast(editProgramNameMessage);
+            Log.i(LOG_TAG, "Updated row is " + Integer.toString(update));
+        }
+
     }
 
     @Override
@@ -96,22 +120,29 @@ public class AddProgramActivity extends AppCompatActivity implements LoaderManag
         switch (item.getItemId()) {
             // Respond to a click on the "Save" menu option
             case R.id.action_save:
-                // Save pet to the data base
-                insertProgram();
-                finish();
-                return true;
-            // Respond to a click on the "Delete" menu option
+                if (mCurrentProgramUri == null) {
+                    // Save pet to the data base
+                    insertProgram();
+                    finish();
+                    return true;
+                } else {
+                    updateProgram();
+                    finish();
+                    return true;
+                }
+
+
+                // Respond to a click on the "Delete" menu option
             case R.id.action_delete:
                 // Do nothing for now
                 return true;
             // Respond to a click on the "Up" arrow button in the app bar
             case android.R.id.home:
-                if (mCurrentProgramUri == null){
+                if (mCurrentProgramUri == null) {
                     // Navigate back to parent activity (CatalogActivity)
                     NavUtils.navigateUpFromSameTask(this);
                     return true;
-                }
-                else {
+                } else {
                     // Navigate back to parent activity (ProgramEditActivity)
                     Intent intent1 = new Intent(AddProgramActivity.this, ProgramEditActivity.class);
                     intent1.setData(mCurrentProgramUri);
@@ -125,16 +156,44 @@ public class AddProgramActivity extends AppCompatActivity implements LoaderManag
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-        return null;
+        if (mCurrentProgramUri == null) {
+            return null;
+        }
+
+        String[] projection = {
+                ProgramContract.ProgramEntry.COLUMN_PROGRAM_NAME
+        };
+
+        return new CursorLoader(this,
+                mCurrentProgramUri,
+                projection,
+                null,
+                null,
+                null
+        );
     }
 
     @Override
-    public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+    public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
+        // Bail early if the cursor is null or there is less than 1 row in the cursor
+        if (cursor == null || cursor.getCount() < 1) {
+            return;
+        }
+        if (cursor.moveToFirst()) {
+            int nameColumnIndex = cursor.getColumnIndexOrThrow(ProgramContract.ProgramEntry.COLUMN_PROGRAM_NAME);
+
+            String name = cursor.getString(nameColumnIndex);
+
+            mProgramNameTextView.setText(name);
+        }
+
 
     }
 
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
+        // If the loader is invalidated, clear out all the data from the input fields.
+        mProgramNameTextView.setText("");
 
     }
 }

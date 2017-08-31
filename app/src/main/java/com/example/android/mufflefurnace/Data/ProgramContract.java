@@ -52,7 +52,7 @@ public final class ProgramContract {
                 ContentResolver.CURSOR_DIR_BASE_TYPE + "/" + CONTENT_AUTHORITY +"/" +PATH_POINTS;
 
         /**
-         * The MIME type of the {@link #CONTENT_URI_PROGRAMS} for a single pet.
+         * The MIME type of the {@link #CONTENT_URI_PROGRAMS} for a single program.
          */
         public static final  String CONTENT_ITEM_PROGRAM_TYPE =
                 ContentResolver.CURSOR_ITEM_BASE_TYPE + "/" + CONTENT_AUTHORITY +"/" +PATH_PROGRAMS;

@@ -214,8 +214,6 @@ public class ProgramEditActivity extends AppCompatActivity implements LoaderMana
             initPointLoader();
                 break;
 
-
-
             case POINTS_LOADER:
                mPointCursorAdapter.swapCursor(cursor);
         }
