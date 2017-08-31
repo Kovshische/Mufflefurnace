@@ -15,6 +15,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
@@ -33,6 +35,8 @@ public class AddPointActivity extends AppCompatActivity implements LoaderManager
 
     private EditText timeTextView;
     private EditText temperatureTextView;
+
+    private View deleteItem;
 
     private static final String TIME_SEPARATOR = ":";
     private static int LENGTH_SEPARATOR = 1;
@@ -80,6 +84,16 @@ public class AddPointActivity extends AppCompatActivity implements LoaderManager
         mCurrentUri = intent.getData();
 
 
+        final Button deleteButton = (Button) findViewById(R.id.button_delete);
+        deleteButton.setOnClickListener(new View.OnClickListener(){
+            @Override   public void onClick(View view) {
+                deletePoint();
+                Intent i = new Intent(AddPointActivity.this, ProgramEditActivity.class);
+                i.setData(mCurrentProgramUri);
+                startActivity(i);
+            }
+        });
+
         //Uri matcher (is it program Uri or point Uri)
         matchAddEditPoint = mUriMatcher.match(mCurrentUri);
 
@@ -88,6 +102,7 @@ public class AddPointActivity extends AppCompatActivity implements LoaderManager
                 mCurrentProgramUri = mCurrentUri;
                 setTitle(R.string.add_point_title_add_point);
                 getSupportLoaderManager().initLoader(EXISTING_PROGRAM_ID_LOADER, null, this);
+                deleteButton.setVisibility(View.GONE);
                 break;
             case POINT:
                 mCurrentPointUri = mCurrentUri;
@@ -171,10 +186,20 @@ public class AddPointActivity extends AppCompatActivity implements LoaderManager
             displayToast(editPointMessage);
             Log.i(LOG_TAG, "Updated row is " + Integer.toString(update));
         }
+    }
 
-  //      int test = getContentResolver().update()
+    public void deletePoint(){
+        int delete = getContentResolver().delete(mCurrentPointUri,null,null);
 
-
+        if (delete == 0) {
+            //If the  new content URI is null, then there was an error with insertion
+            displayToast("Error with delete point");
+            Log.i(LOG_TAG, "Error with delete point");
+        } else {
+            editPointMessage = "Point deleted successful";
+            displayToast(editPointMessage);
+            Log.i(LOG_TAG, "Deleted row is " + Integer.toString(delete));
+        }
     }
 
     private int timeToInteger(String timeString) {
@@ -221,7 +246,10 @@ public class AddPointActivity extends AppCompatActivity implements LoaderManager
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu options from the res/menu/menu_editor.xml file.
         // This adds menu items to the app bar.
-        getMenuInflater().inflate(R.menu.menu_editor, menu);
+        getMenuInflater().inflate(R.menu.menu_point_add, menu);
+
+
+
         return true;
     }
 
