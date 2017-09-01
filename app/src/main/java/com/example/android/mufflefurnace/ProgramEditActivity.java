@@ -11,14 +11,19 @@ import android.support.v4.app.NavUtils;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.example.android.mufflefurnace.Data.ProgramContract;
 
+import static com.example.android.mufflefurnace.Data.ProgramContract.BASE_CONTENT_URI;
+import static com.example.android.mufflefurnace.Data.ProgramContract.PATH_POINTS;
+import static com.example.android.mufflefurnace.Data.ProgramDbHelper.LOG_TAG;
 import static com.example.android.mufflefurnace.R.id.action_edit_program_name;
 
 public class ProgramEditActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor> {
@@ -103,6 +108,45 @@ public class ProgramEditActivity extends AppCompatActivity implements LoaderMana
     }
 
 
+    //Show toast
+    void displayToast(String text) {
+
+        Toast toast = Toast.makeText(this, text, Toast.LENGTH_LONG);
+        toast.show();
+        Log.i(LOG_TAG, "toast displayed");
+        // toast.setGravity(Gravity.BOTTOM,0,0);
+
+    }
+
+    private void deleteProgram (){
+        Uri pointsUri = Uri.withAppendedPath(BASE_CONTENT_URI, PATH_POINTS);
+
+        String selection = ProgramContract.ProgramEntry.COLUMN_PROGRAM_ID +"=?";
+        String [] selectionArgs = {Integer.toString(mCurrentProgramId)};
+
+        int deletePoints = getContentResolver().delete(pointsUri,selection,selectionArgs);
+
+        if (deletePoints == 0) {
+            //If the  new content URI is null, then there was a
+            // n error with insertion
+            displayToast("Error with delete program");
+            Log.i(LOG_TAG, "Error with delete points in program");
+        } else {
+
+            int deleteProgram = getContentResolver().delete(mCurrentProgramUri,null,null);
+
+            if (deleteProgram == 0) {
+                //If the  new content URI is null, then there was an error with insertion
+                displayToast("Error with delete program");
+                Log.i(LOG_TAG, "Error with delete program");
+            } else {
+                String deleteProgramMessage = "Program deleted successful";
+                displayToast(deleteProgramMessage);
+                Log.i(LOG_TAG, "Deleted program row is " + Integer.toString(deleteProgram));
+                Log.i(LOG_TAG, "Deleted points row is " + Integer.toString(deletePoints));
+            }
+        }
+    }
 
 
     @Override
@@ -131,6 +175,9 @@ public class ProgramEditActivity extends AppCompatActivity implements LoaderMana
             // Respond to a click on the "Delete all entries" menu option
             case R.id.action_delete:
                 // Do nothing for now
+                deleteProgram();
+                Intent intentDelete = new Intent(ProgramEditActivity.this, ProgramsActivity.class);
+                startActivity(intentDelete);
                 return true;
             case android.R.id.home:
                 // Navigate back to parent activity (ProgramViewActivity)
