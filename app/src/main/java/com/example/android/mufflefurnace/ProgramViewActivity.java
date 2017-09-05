@@ -8,11 +8,17 @@ import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ListView;
 
 import com.example.android.mufflefurnace.Data.ProgramContract;
+import com.jjoe64.graphview.GraphView;
+import com.jjoe64.graphview.series.DataPoint;
+import com.jjoe64.graphview.series.LineGraphSeries;
+
+import java.util.ArrayList;
 
 public class ProgramViewActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor>{
 
@@ -24,6 +30,9 @@ public class ProgramViewActivity extends AppCompatActivity implements LoaderMana
     private int mCurrentProgramId;
 
     PointCursorAdapter mPointCursorAdapter;
+
+    ArrayList<DataPoint> dataPointArrayList = new ArrayList<DataPoint>();
+    private GraphView graph;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,6 +50,25 @@ public class ProgramViewActivity extends AppCompatActivity implements LoaderMana
         //in order to figure out if we're creating a new pet or editing existing one.
         Intent intent = getIntent();
         mCurrentProgramUri = intent.getData();
+
+/*
+        //Add graphView
+        GraphView graph = (GraphView) findViewById(R.id.graph_view);
+        LineGraphSeries<DataPoint> series = new LineGraphSeries<>(new DataPoint[] {
+                new DataPoint(0, 1),
+                new DataPoint(1, 5),
+                new DataPoint(2, 3),
+                new DataPoint(3, 2),
+                new DataPoint(4, 6)
+        });
+        graph.addSeries(series);
+
+
+
+        GraphView graph = (GraphView) findViewById(R.id.graph_view);
+*/
+
+        graph = (GraphView) findViewById(R.id.graph_view);
 
         getSupportLoaderManager().initLoader(EXISTING_PROGRAM_ID_LOADER, null, this);
     }
@@ -151,6 +179,30 @@ public class ProgramViewActivity extends AppCompatActivity implements LoaderMana
 
 
             case POINTS_LOADER:
+                if (cursor == null || cursor.getCount() < 1) {
+                    return;
+                }
+
+                int timeColumnIndex = cursor.getColumnIndexOrThrow(ProgramContract.ProgramEntry.COLUMN_TIME);
+                int temperatureColumnIndex = cursor.getColumnIndexOrThrow(ProgramContract.ProgramEntry.COLUMN_TEMPERATURE);
+
+                while (cursor.moveToNext()){
+                    int time = cursor.getInt(timeColumnIndex);
+                    int temperature = cursor.getInt(temperatureColumnIndex);
+
+                    dataPointArrayList.add(new DataPoint(time,temperature));
+                    Log.i("array for graphView", time + "/" + temperature);
+                }
+
+                DataPoint[] dataPoint = dataPointArrayList.toArray(new DataPoint[]{});
+//                DataPoint[] dataPoint = (DataPoint[]) dataPointArrayList.toArray(new DataPoint[0]);
+                Log.i("length of datapoint", Integer.toString(dataPoint.length));
+
+                LineGraphSeries<DataPoint> series = new LineGraphSeries<>(dataPoint);
+
+                graph.addSeries(series);
+
+
                 mPointCursorAdapter.swapCursor(cursor);
         }
     }
