@@ -242,6 +242,7 @@ public class AddPointActivity extends AppCompatActivity implements LoaderManager
         return timeInSeconds;
     }
 
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu options from the res/menu/menu_editor.xml file.
@@ -388,7 +389,7 @@ public class AddPointActivity extends AppCompatActivity implements LoaderManager
                     int time = cursor.getInt(timeColumnIndex);
                     mCurrentProgramID = cursor.getInt(programIdIndex);
 
-                    timeTextView.setText(Integer.toString(time));
+                    timeTextView.setText(PointCursorAdapter.timeToString(time));
                     temperatureTextView.setText(Integer.toString(temperature));
 
                     mCurrentProgramUri = ContentUris.withAppendedId(ProgramContract.ProgramEntry.CONTENT_URI_PROGRAMS, mCurrentProgramID);

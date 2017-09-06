@@ -186,11 +186,15 @@ public class ProgramViewActivity extends AppCompatActivity implements LoaderMana
                 int timeColumnIndex = cursor.getColumnIndexOrThrow(ProgramContract.ProgramEntry.COLUMN_TIME);
                 int temperatureColumnIndex = cursor.getColumnIndexOrThrow(ProgramContract.ProgramEntry.COLUMN_TEMPERATURE);
 
+                //Display graphView
+
                 while (cursor.moveToNext()){
                     int time = cursor.getInt(timeColumnIndex);
                     int temperature = cursor.getInt(temperatureColumnIndex);
 
-                    dataPointArrayList.add(new DataPoint(time,temperature));
+                    double timeDouble = (double) time/60;
+
+                    dataPointArrayList.add(new DataPoint(timeDouble,temperature));
                     Log.i("array for graphView", time + "/" + temperature);
                 }
 

@@ -10,6 +10,8 @@ import android.widget.TextView;
 
 import com.example.android.mufflefurnace.Data.ProgramContract;
 
+import java.text.SimpleDateFormat;
+
 /**
  * Created by admin on 7/21/2017.
  */
@@ -38,7 +40,7 @@ public class PointCursorAdapter extends CursorAdapter {
         int time = cursor.getInt(cursor.getColumnIndexOrThrow(ProgramContract.ProgramEntry.COLUMN_TIME));
         int temperature  = cursor.getInt(cursor.getColumnIndexOrThrow(ProgramContract.ProgramEntry.COLUMN_TEMPERATURE));
 
-        String timeString = Integer.toString(time);
+        String timeString = timeToString(time);
         String temperatureString = Integer.toString(temperature);
 
         final int program_id = cursor.getInt(cursor.getColumnIndexOrThrow(ProgramContract.ProgramEntry._ID));
@@ -51,6 +53,14 @@ public class PointCursorAdapter extends CursorAdapter {
 
     }
 
+    public static String timeToString (int time){
+        String timeString;
+
+        SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
+        timeString = sdf.format(time*60*1000);
+
+        return timeString;
+    }
 
 
 }
