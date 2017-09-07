@@ -51,6 +51,25 @@
     </RelativeLayout>
 
     <RelativeLayout
+        android:id="@+id/menu_archive"
+        style="@style/MainScreenMenu"
+        android:drawSelectorOnTop="true">
+
+        <TextView
+            android:id="@+id/menu_archive_text"
+            style="@style/MainScreenMenuText"
+            android:text="@string/main_menu_archive" />
+
+        <ImageView
+            android:id="@+id/menu_archive_image"
+            style="@style/MaineScreenIcon"
+            android:layout_toLeftOf="@id/menu_archive_text"
+            android:src="@drawable/ic_archive_white_36dp" />
+
+
+    </RelativeLayout>
+
+    <RelativeLayout
         android:id="@+id/menu_settings"
         style="@style/MainScreenMenu"
         android:drawSelectorOnTop="true">

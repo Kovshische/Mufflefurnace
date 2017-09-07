@@ -3,7 +3,10 @@
 
     <string name="main_menu_connect">Connect</string>
     <string name="main_menu_programs">Programs</string>
+    <string name="main_menu_archive">Archive</string>
     <string name="main_menu_settings">Settings</string>
+
+
     <string name="program_view_create_program">Create program</string>
     <string name="program_view_menu_edit">Edit</string>
     <string name="program_view_menu_delete">Delete</string>
