@@ -11,6 +11,7 @@ import android.widget.TextView;
 import com.example.android.mufflefurnace.Data.ProgramContract;
 
 import java.text.SimpleDateFormat;
+import java.util.TimeZone;
 
 /**
  * Created by admin on 7/21/2017.
@@ -40,7 +41,7 @@ public class PointCursorAdapter extends CursorAdapter {
         int time = cursor.getInt(cursor.getColumnIndexOrThrow(ProgramContract.ProgramEntry.COLUMN_TIME));
         int temperature  = cursor.getInt(cursor.getColumnIndexOrThrow(ProgramContract.ProgramEntry.COLUMN_TEMPERATURE));
 
-        String timeString = timeToString(time);
+        String timeString = mTimeToString(time);
         String temperatureString = Integer.toString(temperature);
 
         final int program_id = cursor.getInt(cursor.getColumnIndexOrThrow(ProgramContract.ProgramEntry._ID));
@@ -53,11 +54,13 @@ public class PointCursorAdapter extends CursorAdapter {
 
     }
 
-    public static String timeToString (int time){
+    public static String mTimeToString (int time){
         String timeString;
 
         SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
+        sdf.setTimeZone(TimeZone.getTimeZone("GMT+0"));
         timeString = sdf.format(time*60*1000);
+
 
         return timeString;
     }

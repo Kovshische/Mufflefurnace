@@ -389,7 +389,7 @@ public class AddPointActivity extends AppCompatActivity implements LoaderManager
                     int time = cursor.getInt(timeColumnIndex);
                     mCurrentProgramID = cursor.getInt(programIdIndex);
 
-                    timeTextView.setText(PointCursorAdapter.timeToString(time));
+                    timeTextView.setText(PointCursorAdapter.mTimeToString(time));
                     temperatureTextView.setText(Integer.toString(temperature));
 
                     mCurrentProgramUri = ContentUris.withAppendedId(ProgramContract.ProgramEntry.CONTENT_URI_PROGRAMS, mCurrentProgramID);
