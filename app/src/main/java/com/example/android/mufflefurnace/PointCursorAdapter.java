@@ -62,6 +62,8 @@ public class PointCursorAdapter extends CursorAdapter {
         timeString = sdf.format(time*60*1000);
 
 
+
+
         return timeString;
     }
 
