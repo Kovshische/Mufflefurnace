@@ -19,6 +19,8 @@ import java.util.TimeZone;
 
 public class PointCursorAdapter extends CursorAdapter {
 
+    private static final int day = 24*60;
+
     public PointCursorAdapter(Context context,Cursor cursor){
         super(context, cursor, 0);
     }
@@ -55,12 +57,28 @@ public class PointCursorAdapter extends CursorAdapter {
     }
 
     public static String mTimeToString (int time){
+
+        int hours;
+
         String timeString;
 
-        SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
-        sdf.setTimeZone(TimeZone.getTimeZone("GMT+0"));
-        timeString = sdf.format(time*60*1000);
 
+        if (time < 24*60){
+            SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
+            sdf.setTimeZone(TimeZone.getTimeZone("GMT+0"));
+            timeString = sdf.format(time*60*1000);
+        }
+
+        else {
+
+            hours = time/60;
+
+            SimpleDateFormat sdf = new SimpleDateFormat(":mm");
+            sdf.setTimeZone(TimeZone.getTimeZone("GMT+0"));
+            timeString = sdf.format(time*60*1000);
+
+            timeString = Integer.toString(hours) + timeString;
+        }
 
 
 

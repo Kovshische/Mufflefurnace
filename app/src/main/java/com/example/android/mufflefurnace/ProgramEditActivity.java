@@ -126,7 +126,7 @@ public class ProgramEditActivity extends AppCompatActivity implements LoaderMana
 
         int deletePoints = getContentResolver().delete(pointsUri,selection,selectionArgs);
 
-        if (deletePoints == 0) {
+        if (deletePoints == -1) {
             //If the  new content URI is null, then there was a
             // n error with insertion
             displayToast("Error with delete program");

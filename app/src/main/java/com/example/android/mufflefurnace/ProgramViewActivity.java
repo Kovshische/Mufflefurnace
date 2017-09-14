@@ -34,6 +34,7 @@ public class ProgramViewActivity extends AppCompatActivity implements LoaderMana
     ArrayList<DataPoint> dataPointArrayList = new ArrayList<DataPoint>();
     private GraphView graph;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
