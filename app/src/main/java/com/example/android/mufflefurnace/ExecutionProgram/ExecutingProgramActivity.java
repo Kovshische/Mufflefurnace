@@ -1,4 +1,4 @@
-package com.example.android.mufflefurnace;
+package com.example.android.mufflefurnace.ExecutionProgram;
 
 import android.content.Intent;
 import android.database.Cursor;
@@ -9,21 +9,17 @@ import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.view.View;
-import android.widget.ListView;
-import android.widget.RelativeLayout;
 
 import com.example.android.mufflefurnace.Data.ProgramContract;
-import com.example.android.mufflefurnace.ExecutionProgram.ExecutingProgramActivity;
+import com.example.android.mufflefurnace.R;
 import com.jjoe64.graphview.GraphView;
 import com.jjoe64.graphview.series.DataPoint;
 import com.jjoe64.graphview.series.LineGraphSeries;
 
 import java.util.ArrayList;
 
-public class ProgramViewActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor>{
+public class ExecutingProgramActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor>{
+
 
     private static final int EXISTING_PROGRAM_ID_LOADER = 1;
     private static final int POINTS_LOADER = 2;
@@ -32,103 +28,35 @@ public class ProgramViewActivity extends AppCompatActivity implements LoaderMana
     private String mCurrentProgramName;
     private int mCurrentProgramId;
 
-    PointCursorAdapter mPointCursorAdapter;
-
     ArrayList<DataPoint> dataPointArrayList = new ArrayList<DataPoint>();
     private GraphView graph;
-
-
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_program_view);
+        setContentView(R.layout.activity_executing_program);
 
 
-        //find the ListView which will be populated with the program data
-        ListView pointListView = (ListView) findViewById(R.id.list_view_points);
-
-        mPointCursorAdapter = new PointCursorAdapter(this, null);
-        pointListView.setAdapter(mPointCursorAdapter);
 
         //Examine the intent that was used to launch this activity
         //in order to figure out if we're creating a new pet or editing existing one.
         Intent intent = getIntent();
         mCurrentProgramUri = intent.getData();
 
-
-        //Start button
-        RelativeLayout start = (RelativeLayout) findViewById(R.id.start);
-        start.setOnClickListener(new View.OnClickListener(){
-            @Override
-            public void onClick(View view) {
-                Intent i = new Intent(ProgramViewActivity.this, ExecutingProgramActivity.class);
-                i.setData(mCurrentProgramUri);
-                startActivity(i);
-            }
-        });
-
-/*
-        //Add graphView
-        GraphView graph = (GraphView) findViewById(R.id.graph_view);
-        LineGraphSeries<DataPoint> series = new LineGraphSeries<>(new DataPoint[] {
-                new DataPoint(0, 1),
-                new DataPoint(1, 5),
-                new DataPoint(2, 3),
-                new DataPoint(3, 2),
-                new DataPoint(4, 6)
-        });
-        graph.addSeries(series);
-
-
-
-        GraphView graph = (GraphView) findViewById(R.id.graph_view);
-*/
-
-        graph = (GraphView) findViewById(R.id.graph_view);
+        graph = (GraphView) findViewById(R.id.executing_program_graph_view);
 
         getSupportLoaderManager().initLoader(EXISTING_PROGRAM_ID_LOADER, null, this);
     }
+
 
     private void initPointLoader() {
         getSupportLoaderManager().initLoader(POINTS_LOADER, null, this);
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu options from the res/menu/menu_catalog.xml file.
-        // This adds menu items to the app bar.
-        getMenuInflater().inflate(R.menu.menu_program_view, menu);
-        return true;
-    }
-
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // User clicked on a menu option in the app bar overflow menu
-        switch (item.getItemId()) {
-            // Respond to a click on the "Insert dummy data" menu option
-            case R.id.action_edit_program:
-
-                Intent intent = new Intent(ProgramViewActivity.this, ProgramEditActivity.class);
-                intent.setData(mCurrentProgramUri);
-                startActivity(intent);
-
-                return true;
-
-
-            // Respond to a click on the "Delete all entries" menu option
-            case R.id.action_delete:
-                // Do nothing for now
-                return true;
-        }
-        return super.onOptionsItemSelected(item);
-    }
-
-
-    @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+
         if (id == EXISTING_PROGRAM_ID_LOADER) {
             if (mCurrentProgramUri == null) {
                 return null;
@@ -174,6 +102,7 @@ public class ProgramViewActivity extends AppCompatActivity implements LoaderMana
         }
         else return null;
     }
+
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
@@ -225,12 +154,13 @@ public class ProgramViewActivity extends AppCompatActivity implements LoaderMana
                 graph.addSeries(series);
 
 
-                mPointCursorAdapter.swapCursor(cursor);
+
         }
+
     }
 
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
-        mPointCursorAdapter.swapCursor(null);
+
     }
 }

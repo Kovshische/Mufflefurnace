@@ -16,7 +16,6 @@
     <string name="add_point_placeholder_time">HH:MM</string>
 
 
-
     <string name="settings_max_heating_rate">Max heating rate</string>
     <string name="settings_max_cooling_rate">Max cooling rate</string>
 
@@ -65,6 +64,7 @@
     <string name="add_point_title_edit_point">Edit Point</string>
     <string name="add_point_title_add_point">Add Point</string>
 
+    <string name="executing_program_view_stop">Stop</string>
 
 
 
