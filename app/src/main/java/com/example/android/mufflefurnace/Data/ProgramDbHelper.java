@@ -37,6 +37,20 @@ public class ProgramDbHelper extends SQLiteOpenHelper {
                 + ProgramEntry.COLUMN_TIME + " INTEGER NOT NULL" +");";
         db.execSQL(SQL_CREATE_POINTS_TABLE);
 
+        String SQL_CREATE_A_PROGRAMS_TABLE = "CREATE TABLE " + ProgramEntry.TABLE_A_PROGRAMS + " ("
+                + ProgramEntry._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
+                + ProgramEntry.COLUMN_PROGRAM_ID + " INTEGER NOT NULL, "
+                + ProgramEntry.COLUMN_STARTED_AT + " DATETIME DEFAULT CURRENT_TIMESTAMP, "
+                + ProgramEntry.COLUMN_FINISHED_AT + " DATETIME" +");";
+        db.execSQL(SQL_CREATE_A_PROGRAMS_TABLE);
+
+        String SQL_CREATE_A_POINTS_TABLE = "CREATE TABLE " + ProgramEntry.TABLE_POINTS + " ("
+                + ProgramEntry._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
+                + ProgramEntry.COLUMN_A_PROGRAM_ID + " INTEGER NOT NULL, "
+                + ProgramEntry.COLUMN_TEMPERATURE + " INTEGER NOT NULL, "
+                + ProgramEntry.COLUMN_TIME + " INTEGER NOT NULL" +");";
+        db.execSQL(SQL_CREATE_A_POINTS_TABLE);
+
     }
 
     @Override

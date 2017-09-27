@@ -34,11 +34,11 @@ public class ProgramProvider  extends ContentProvider{
         // The content URI of the form "content://com.example.android.pets/pets" will map to the
         // integer code {@link #PETS}. This URI is used to provide access to MULTIPLE rows
         // of the pets table.
-        mUriMatcher.addURI(ProgramContract.CONTENT_AUTHORITY, ProgramContract.PATH_PROGRAMS, PROGRAMS);
-        mUriMatcher.addURI(ProgramContract.CONTENT_AUTHORITY, ProgramContract.PATH_PROGRAMS + "/#", PROGRAM_ID);
+        mUriMatcher.addURI(ProgramContract.CONTENT_AUTHORITY, ProgramContract.PACTH_PROGRAMS, PROGRAMS);
+        mUriMatcher.addURI(ProgramContract.CONTENT_AUTHORITY, ProgramContract.PACTH_PROGRAMS + "/#", PROGRAM_ID);
 
-        mUriMatcher.addURI(ProgramContract.CONTENT_AUTHORITY, ProgramContract.PATH_POINTS, POINTS);
-        mUriMatcher.addURI(ProgramContract.CONTENT_AUTHORITY, ProgramContract.PATH_POINTS + "/#", POINT_ID);
+        mUriMatcher.addURI(ProgramContract.CONTENT_AUTHORITY, ProgramContract.PATCH_POINTS, POINTS);
+        mUriMatcher.addURI(ProgramContract.CONTENT_AUTHORITY, ProgramContract.PATCH_POINTS + "/#", POINT_ID);
 
     }
 
