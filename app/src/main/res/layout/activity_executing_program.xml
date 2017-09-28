@@ -7,20 +7,24 @@
     android:orientation="vertical"
     tools:context="com.example.android.mufflefurnace.ProgramViewActivity">
 
-
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:layout_marginBottom="@dimen/main_screen_item_height">
+        android:layout_marginBottom="@dimen/main_screen_item_height"
+        android:orientation="vertical">
 
-        <com.jjoe64.graphview.GraphView
-            android:id="@+id/graph_view"
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="300dp" />
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <com.jjoe64.graphview.GraphView
+                android:id="@+id/executing_program_graph_view"
+                android:layout_width="match_parent"
+                android:layout_height="300dp" />
 
 
-
+        </LinearLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -38,25 +42,19 @@
                 android:text="@string/program_view_edit_temperature" />
 
         </LinearLayout>
-
-        <ListView
-            android:id="@+id/list_view_points"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:padding="@dimen/activity_margin" />
-
     </LinearLayout>
 
     <RelativeLayout
-        android:id="@+id/start"
+        android:id="@+id/stop"
         style="@style/MainScreenMenu"
         android:layout_alignParentBottom="true"
+        android:background="@color/colorAccent"
         android:drawSelectorOnTop="true">
 
         <TextView
-            android:id="@+id/start1"
+            android:id="@+id/stop1"
             style="@style/MainScreenMenuText"
-            android:text="@string/program_view_start"
+            android:text="@string/executing_program_view_stop"
             android:textAllCaps="true" />
     </RelativeLayout>
 

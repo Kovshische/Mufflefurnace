@@ -22,7 +22,7 @@ import android.widget.Toast;
 import com.example.android.mufflefurnace.Data.ProgramContract;
 
 import static com.example.android.mufflefurnace.Data.ProgramContract.BASE_CONTENT_URI;
-import static com.example.android.mufflefurnace.Data.ProgramContract.PATH_POINTS;
+import static com.example.android.mufflefurnace.Data.ProgramContract.PATCH_POINTS;
 import static com.example.android.mufflefurnace.Data.ProgramDbHelper.LOG_TAG;
 import static com.example.android.mufflefurnace.R.id.action_edit_program_name;
 
@@ -119,14 +119,14 @@ public class ProgramEditActivity extends AppCompatActivity implements LoaderMana
     }
 
     private void deleteProgram (){
-        Uri pointsUri = Uri.withAppendedPath(BASE_CONTENT_URI, PATH_POINTS);
+        Uri pointsUri = Uri.withAppendedPath(BASE_CONTENT_URI, PATCH_POINTS);
 
         String selection = ProgramContract.ProgramEntry.COLUMN_PROGRAM_ID +"=?";
         String [] selectionArgs = {Integer.toString(mCurrentProgramId)};
 
         int deletePoints = getContentResolver().delete(pointsUri,selection,selectionArgs);
 
-        if (deletePoints == 0) {
+        if (deletePoints == -1) {
             //If the  new content URI is null, then there was a
             // n error with insertion
             displayToast("Error with delete program");

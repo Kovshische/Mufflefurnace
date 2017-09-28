@@ -60,7 +60,7 @@ public class AddPointActivity extends AppCompatActivity implements LoaderManager
         // integer code {@link #PETS}. This URI is used to provide access to MULTIPLE rows
         // of the pets table.
         mUriMatcher.addURI(CONTENT_AUTHORITY, ProgramContract.PATH_PROGRAMS + "/#", PROGRAM);
-        mUriMatcher.addURI(CONTENT_AUTHORITY, ProgramContract.PATH_POINTS + "/#", POINT);
+        mUriMatcher.addURI(CONTENT_AUTHORITY, ProgramContract.PATCH_POINTS + "/#", POINT);
     }
 
     int matchAddEditPoint;
@@ -242,6 +242,7 @@ public class AddPointActivity extends AppCompatActivity implements LoaderManager
         return timeInSeconds;
     }
 
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu options from the res/menu/menu_editor.xml file.
@@ -388,7 +389,7 @@ public class AddPointActivity extends AppCompatActivity implements LoaderManager
                     int time = cursor.getInt(timeColumnIndex);
                     mCurrentProgramID = cursor.getInt(programIdIndex);
 
-                    timeTextView.setText(Integer.toString(time));
+                    timeTextView.setText(PointCursorAdapter.mTimeToString(time));
                     temperatureTextView.setText(Integer.toString(temperature));
 
                     mCurrentProgramUri = ContentUris.withAppendedId(ProgramContract.ProgramEntry.CONTENT_URI_PROGRAMS, mCurrentProgramID);

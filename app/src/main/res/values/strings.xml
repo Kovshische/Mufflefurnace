@@ -3,7 +3,10 @@
 
     <string name="main_menu_connect">Connect</string>
     <string name="main_menu_programs">Programs</string>
+    <string name="main_menu_archive">Archive</string>
     <string name="main_menu_settings">Settings</string>
+
+
     <string name="program_view_create_program">Create program</string>
     <string name="program_view_menu_edit">Edit</string>
     <string name="program_view_menu_delete">Delete</string>
@@ -11,7 +14,6 @@
     <string name="add_point_add_point">Add point</string>
     <string name="add_point_edit_point">Edit point</string>
     <string name="add_point_placeholder_time">HH:MM</string>
-
 
 
     <string name="settings_max_heating_rate">Max heating rate</string>
@@ -51,7 +53,7 @@
     <string name="title_activity_program_edit">Edit Program</string>
 
     <!-- Activity ProgramView ProgramEdit -->
-    <string name="program_view_edit_time">Time (minutes)</string>
+    <string name="program_view_edit_time">Time </string>
     <string name="program_view_edit_temperature">Temperature  °C </string>
 
     <!-- AddProgram Title -->
@@ -62,6 +64,7 @@
     <string name="add_point_title_edit_point">Edit Point</string>
     <string name="add_point_title_add_point">Add Point</string>
 
+    <string name="executing_program_view_stop">Stop</string>
 
 
 

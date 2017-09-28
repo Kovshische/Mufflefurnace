@@ -25,6 +25,12 @@ public class ProgramProvider  extends ContentProvider{
     private static final int POINTS = 200;
     private static final int POINT_ID = 201;
 
+    private static final int A_PROGRAMS = 300;
+    private static final int A_PROGRAM_ID = 301;
+
+    private static final int A_POINTS = 400;
+    private static final int A_POINT_ID = 401;
+
     private static final UriMatcher mUriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
 
     static {
@@ -39,6 +45,12 @@ public class ProgramProvider  extends ContentProvider{
 
         mUriMatcher.addURI(ProgramContract.CONTENT_AUTHORITY, ProgramContract.PATH_POINTS, POINTS);
         mUriMatcher.addURI(ProgramContract.CONTENT_AUTHORITY, ProgramContract.PATH_POINTS + "/#", POINT_ID);
+
+        mUriMatcher.addURI(ProgramContract.CONTENT_AUTHORITY, ProgramContract.PATH_A_PROGRAMS, A_PROGRAMS);
+        mUriMatcher.addURI(ProgramContract.CONTENT_AUTHORITY, ProgramContract.PATH_A_PROGRAMS + "/#", A_PROGRAM_ID);
+
+        mUriMatcher.addURI(ProgramContract.CONTENT_AUTHORITY, ProgramContract.PATH_A_POINTS, A_POINTS);
+        mUriMatcher.addURI(ProgramContract.CONTENT_AUTHORITY, ProgramContract.PATH_A_POINTS + "/#", A_POINT_ID);
 
     }
 
@@ -113,6 +125,56 @@ public class ProgramProvider  extends ContentProvider{
                         sortOrder);
                 break;
 
+            case A_PROGRAMS:
+                // For the PROGRAMS code, query the program table directly with the given
+                // projection, selection, selection arguments, and sort order. The cursor
+                // could contain multiple rows of the pets table.
+                cursor = database.query(ProgramContract.ProgramEntry.TABLE_A_PROGRAMS,
+                        projection,
+                        selection,
+                        selectionArgs,
+                        null,
+                        null,
+                        sortOrder
+                );
+                break;
+
+            case A_PROGRAM_ID:
+                selection = ProgramContract.ProgramEntry._ID + "=?";
+                selectionArgs = new  String[]{String.valueOf(ContentUris.parseId(uri))};
+                cursor = database.query(ProgramContract.ProgramEntry.TABLE_A_PROGRAMS,
+                        projection,
+                        selection,
+                        selectionArgs,
+                        null,
+                        null,
+                        sortOrder);
+                break;
+
+            case A_POINTS:
+                cursor = database.query(ProgramContract.ProgramEntry.TABLE_A_POINTS,
+                        projection,
+                        selection,
+                        selectionArgs,
+                        null,
+                        null,
+                        sortOrder
+                );
+                break;
+
+            case A_POINT_ID:
+                selection = ProgramContract.ProgramEntry._ID + "=?";
+                selectionArgs = new  String[]{String.valueOf(ContentUris.parseId(uri))};
+                cursor = database.query(ProgramContract.ProgramEntry.TABLE_A_POINTS,
+                        projection,
+                        selection,
+                        selectionArgs,
+                        null,
+                        null,
+                        sortOrder);
+                break;
+
+
             default:
                 throw new IllegalArgumentException("Cannot query, unknown URI" + uri);
         }
@@ -137,6 +199,14 @@ public class ProgramProvider  extends ContentProvider{
                 return ProgramContract.ProgramEntry.CONTENT_LIST_POINTS_TYPE;
             case POINT_ID:
                 return ProgramContract.ProgramEntry.CONTENT_ITEM_POINT_TYPE;
+            case  A_PROGRAMS:
+                return ProgramContract.ProgramEntry.CONTENT_LIST_A_PROGRAMS_TYPE;
+            case A_PROGRAM_ID:
+                return ProgramContract.ProgramEntry.CONTENT_ITEM_A_PROGRAM_TYPE;
+            case A_POINTS:
+                return ProgramContract.ProgramEntry.CONTENT_LIST_A_POINTS_TYPE;
+            case A_POINT_ID:
+                return ProgramContract.ProgramEntry.CONTENT_ITEM_A_POINT_TYPE;
             default:
                 throw  new  IllegalArgumentException("Unknown" + uri + "witch match");
         }
@@ -152,6 +222,10 @@ public class ProgramProvider  extends ContentProvider{
                 return insertProgram(uri, values);
             case POINTS:
                 return insertPoint(uri, values);
+            case A_PROGRAMS:
+                return insertArchiveProgram(uri, values);
+            case A_POINTS:
+                return insertArchivePoint(uri, values);
             default:
                 throw new IllegalArgumentException("Insention is not supported for " + uri);
         }
@@ -215,6 +289,67 @@ public class ProgramProvider  extends ContentProvider{
         return ContentUris.withAppendedId(uri, id);
     }
 
+    private Uri insertArchiveProgram(Uri uri, ContentValues contentValues){
+        //sanity checks
+        Integer program_id = contentValues.getAsInteger(ProgramContract.ProgramEntry.COLUMN_PROGRAM_ID);
+        if (program_id == null){
+            throw new IllegalArgumentException("Program requires a name");
+        }
+
+        // Should add datetime. !!!!!
+
+        SQLiteDatabase database = mDbHelper.getWritableDatabase();
+
+        long id = database.insert(ProgramContract.ProgramEntry.TABLE_A_PROGRAMS, null, contentValues);
+
+        if (id == -1){
+            Log.e (LOG_TAG, "Failed to insert row for" + uri);
+            return null;
+        }
+
+        //Notify all listeners that the data has changed for the pet content URI
+        // uri: content://com/example.android.pets/pets
+        getContext().getContentResolver().notifyChange(uri, null);
+
+        return ContentUris.withAppendedId(uri, id);
+    }
+
+    private Uri insertArchivePoint(Uri uri, ContentValues contentValues){
+        //Check that the time is not null
+        Integer time = contentValues.getAsInteger(ProgramContract.ProgramEntry.COLUMN_TIME);
+        if (time == null && time < 0){
+            throw new IllegalArgumentException("Point requires a valid time");
+        }
+
+        //Check that the temperature is not null
+        Integer temperature = contentValues.getAsInteger(ProgramContract.ProgramEntry.COLUMN_TEMPERATURE);
+        if (temperature == null && temperature < 0){
+            throw new IllegalArgumentException("Point requires a valid temperature");
+        }
+
+        //Check that the PROGRAM_ID is not null
+        Integer archiveProgramId = contentValues.getAsInteger(ProgramContract.ProgramEntry.COLUMN_A_PROGRAM_ID);
+        if (archiveProgramId == null ){
+            throw new IllegalArgumentException("ArchiveProgram Id require a ID (integer)");
+        }
+
+        SQLiteDatabase database = mDbHelper.getWritableDatabase();
+
+        // Insert the new point with the given values
+        long id = database.insert(ProgramContract.ProgramEntry.TABLE_A_POINTS, null, contentValues);
+        // If the ID is -1, then the insertion failed. Log an error and return null.
+        if (id == -1){
+            Log.e(LOG_TAG, "Failed to insert row for " + uri);
+            return null;
+        }
+
+        // Notify all listeners that the data has changed for the programs content URI
+        getContext().getContentResolver().notifyChange(uri, null);
+
+        // Return the new URI with the ID (of the newly inserted row) appended at the end
+        return ContentUris.withAppendedId(uri, id);
+    }
+
     @Override
     public int delete(@NonNull Uri uri, @Nullable String selection, @Nullable String[] selectionArgs) {
 
@@ -244,6 +379,26 @@ public class ProgramProvider  extends ContentProvider{
                 selection = ProgramContract.ProgramEntry._ID +"=?";
                 selectionArgs = new String[] {String.valueOf(ContentUris.parseId(uri))};
                 rowDeleted = database.delete(ProgramContract.ProgramEntry.TABLE_POINTS, selection,selectionArgs);
+                break;
+            case A_PROGRAMS:
+                // Delete all rows that match the selection and selection args
+                rowDeleted = database.delete(ProgramContract.ProgramEntry.TABLE_A_PROGRAMS, selection, selectionArgs);
+                break;
+            case A_PROGRAM_ID:
+                // Delete single row given by the ID in the URI
+                selection = ProgramContract.ProgramEntry._ID + "=?";
+                selectionArgs = new String[] {String.valueOf(ContentUris.parseId(uri))};
+                rowDeleted = database.delete(ProgramContract.ProgramEntry.TABLE_A_PROGRAMS, selection, selectionArgs);
+                break;
+            case A_POINTS:
+                // Delete all rows that match the selection and selection args
+                rowDeleted = database.delete(ProgramContract.ProgramEntry.TABLE_A_POINTS, selection, selectionArgs);
+                break;
+            case A_POINT_ID:
+                // Delete single row given by the ID in the URI
+                selection = ProgramContract.ProgramEntry._ID +"=?";
+                selectionArgs = new String[] {String.valueOf(ContentUris.parseId(uri))};
+                rowDeleted = database.delete(ProgramContract.ProgramEntry.TABLE_A_POINTS, selection,selectionArgs);
                 break;
             default:
                 throw new IllegalArgumentException("Delettion is not supported fo " + uri);
@@ -276,6 +431,8 @@ public class ProgramProvider  extends ContentProvider{
                 selection = ProgramContract.ProgramEntry._ID + "=?";
                 selectionArgs = new String[]{String.valueOf(ContentUris.parseId(uri))};
                 return  updatePoint (uri, values, selection, selectionArgs);
+            case A_PROGRAMS:
+                return updateArchiveProgram (uri, values,selection, selectionArgs);
             default:
                 throw new IllegalArgumentException("Update is not supported for " + uri);
         }
@@ -327,15 +484,15 @@ public class ProgramProvider  extends ContentProvider{
         if (values.containsKey(ProgramContract.ProgramEntry.COLUMN_TEMPERATURE)){
             Integer temperature = values.getAsInteger(ProgramContract.ProgramEntry.COLUMN_TEMPERATURE);
             if (temperature == null && temperature < 0){
-                throw new IllegalArgumentException("Temperature required a valid value");
+                throw new IllegalArgumentException("Point required a valid Temperature");
             }
         }
         // If the {@link ProgramEntry#COLUMN_PROGRAM_ID} Key is present
         //Check that the program ID is not null
         if (values.containsKey(ProgramContract.ProgramEntry.COLUMN_PROGRAM_ID)){
             Integer programId = values.getAsInteger(ProgramContract.ProgramEntry.COLUMN_PROGRAM_ID);
-            if (programId == null ){
-                throw new IllegalArgumentException("Program ID required a value");
+            if (programId == null && programId <= 0 ){
+                throw new IllegalArgumentException("Point required a valid program Id");
             }
         }
 
@@ -343,6 +500,77 @@ public class ProgramProvider  extends ContentProvider{
 
         // Perform the update on the database and get the number of rows affected
         int rowsUpdated = database.update(ProgramContract.ProgramEntry.TABLE_POINTS,values, selection, selectionArg);
+
+        // If 1 or more rows were updated, then notify all listeners that the data at the
+        // given URI has changed
+        if (rowsUpdated != 0) {
+            getContext().getContentResolver().notifyChange(uri, null);
+        }
+        return rowsUpdated;
+    }
+
+    private int updateArchiveProgram(Uri uri, ContentValues values, String selection, String[] selectionArgs){
+        // If the {@link PetEntry#COLUMN_PET_NAME} key is present
+        // check that the name value is not null.
+        if(values.containsKey(ProgramContract.ProgramEntry.COLUMN_PROGRAM_ID)){
+            Integer programId = values.getAsInteger(ProgramContract.ProgramEntry.COLUMN_PROGRAM_ID);
+            if (programId == null){
+                throw new IllegalArgumentException("Archive Program requires a program Id");
+            }
+        }
+
+        // If there are no values to update, then don't try to update the database
+        if (values.size() == 0){
+            return 0;
+        }
+
+        // Otherwise, get writeable database to update the data
+        SQLiteDatabase database = mDbHelper.getWritableDatabase();
+
+        // Perform the update on the database and get the number of rows affected
+        int rowsUpdated = database.update(ProgramContract.ProgramEntry.TABLE_A_PROGRAMS, values, selection,selectionArgs);
+
+        // If 1 or more rows were updated, then notify all listeners that the data at the
+        // given URI has changed
+        if (rowsUpdated != 0){
+            getContext().getContentResolver().notifyChange(uri, null);
+        }
+
+        // Return the number of rows updated
+        return rowsUpdated;
+    }
+
+    private int updateArchivePoint (Uri uri, ContentValues values, String selection, String[] selectionArg){
+        // If the {@link ProgramEntry#COLUMN_TIME} Key is present
+        //Check that the time value is not null, <0.
+        if (values.containsKey(ProgramContract.ProgramEntry.COLUMN_TIME)){
+            Integer time = values.getAsInteger(ProgramContract.ProgramEntry.COLUMN_TIME);
+            if (time == null && time < 0){
+                throw new IllegalArgumentException("Archive Point requires a valid time");
+            }
+        }
+
+        // If the {@link ProgramEntry#COLUMN_TEMPERATURE} Key is present
+        //Check that the temperature value is not null, <0.
+        if (values.containsKey(ProgramContract.ProgramEntry.COLUMN_TEMPERATURE)){
+            Integer temperature = values.getAsInteger(ProgramContract.ProgramEntry.COLUMN_TEMPERATURE);
+            if (temperature == null && temperature < 0){
+                throw new IllegalArgumentException("Archive point required a valid temperature");
+            }
+        }
+        // If the {@link ProgramEntry#COLUMN_PROGRAM_ID} Key is present
+        //Check that the program ID is not null
+        if (values.containsKey(ProgramContract.ProgramEntry.COLUMN_A_PROGRAM_ID)){
+            Integer archiveProgramId = values.getAsInteger(ProgramContract.ProgramEntry.COLUMN_A_PROGRAM_ID);
+            if (archiveProgramId == null && archiveProgramId <=0 ){
+                throw new IllegalArgumentException("Archive Point required a valid Archive Program ID ");
+            }
+        }
+
+        SQLiteDatabase database = mDbHelper.getWritableDatabase();
+
+        // Perform the update on the database and get the number of rows affected
+        int rowsUpdated = database.update(ProgramContract.ProgramEntry.TABLE_A_POINTS,values, selection, selectionArg);
 
         // If 1 or more rows were updated, then notify all listeners that the data at the
         // given URI has changed
